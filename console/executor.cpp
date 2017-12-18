@@ -139,8 +139,14 @@ bool executor::do_initchain()
         const auto testnet = (metadata_.configured.network.identifier == 118034699u);  //Bitcoin
 #endif //LITECOIN
 
-        const auto genesis = testnet ? block::genesis_testnet() :
-            block::genesis_mainnet();
+        chain::block genesis;
+        // EBP testnet
+        if (metadata_.configured.network.identifier == 2811197310u) {
+            genesis = block::genesis_ebp_testnet();
+        } else {
+           genesis = testnet ? block::genesis_testnet() :
+                block::genesis_mainnet();
+        }
 
         const auto& settings = metadata_.configured.database;
         const auto result = data_base(settings).create(genesis);
@@ -215,7 +221,7 @@ bool executor::run()
 #ifdef LITECOIN
         const auto testnet = (metadata_.configured.network.identifier == 4056470269u); //Litecoin
 #else
-        const auto testnet = (metadata_.configured.network.identifier == 118034699u);  //Bitcoin
+        const auto testnet = (metadata_.configured.network.identifier == 118034699u || metadata_.configured.network.identifier == 2811197310u);  //Bitcoin + EBP
 #endif //LITECOIN
 
     metadata_.configured.node.testnet = testnet;
